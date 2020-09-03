@@ -7,6 +7,9 @@ steps:
     entrypoint: 'bash'
     args: [ '-c', 'gcloud secrets versions access latest --secret=setenv-sh > setenv-sh.sh' ]
 
+  - name: 'gcr.io/cloud-builders/git'
+    args: ['submodule', 'update', '--init', '--recursive']
+
   - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:feature-cloud-build_20200603T2154_3358ed4'
     id: 'Building'
     entrypoint: '/bin/bash'
