@@ -8,6 +8,7 @@ steps:
     args: [ '-c', 'gcloud secrets versions access latest --secret=setenv-sh > setenv-sh.sh' ]
 
   - name: 'gcr.io/cloud-builders/git'
+    env: ['GIT_DISCOVERY_ACROSS_FILESYSTEM=1']
     args: ['submodule', 'update', '--init', '--recursive']
 
   - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:feature-cloud-build_20200603T2154_3358ed4'
