@@ -1,0 +1,13 @@
+steps:
+  - name: 'ubuntu'
+    id: 'Setup'
+    args: ['bash', '-c', "echo `echo $BRANCH_NAME | sed 's,/,-,g' | awk '{print tolower($0)}'`_$(date -u +%Y%m%dT%H%M)_$SHORT_SHA > _TAG; echo $(cat _TAG)"]
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args: [ '-c', 'gcloud secrets versions access latest --secret=setenv-sh > setenv-sh.sh' ]
+
+  - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:feature-cloud-build_20200603T2154_3358ed4'
+    id: 'Building'
+    entrypoint: '/bin/bash'
+    args: ['-c', 'source setenv-sh.sh && mvn versions:set -DnewVersion=$(cat _TAG) && mvn clean deploy -DcreateChecksum=true -DdeployAtEnd=true -DaltDeploymentRepository=releases::default::gs://mavenrepository.xppsi.com/release']
