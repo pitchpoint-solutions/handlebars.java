@@ -11,7 +11,7 @@ steps:
     name: 'gcr.io/cloud-builders/git'
     entrypoint: '/bin/bash'
     env: ['GIT_DISCOVERY_ACROSS_FILESYSTEM=1']
-    args: ['-c', "rm -rf handlebars/src/test/resources/mustache && mkdir handlebars/src/test/resources/mustache && cd handlebars/src/test/resources/mustache && git clone --progress --verbose https://github.com/mustache/spec.git && ls -al"]
+    args: ['-c', "rm -rf handlebars/src/test/resources/mustache && mkdir handlebars/src/test/resources/mustache && cd handlebars/src/test/resources/mustache && git clone --progress --verbose https://github.com/mustache/spec.git && ls -al specs/"]
 
   - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:feature-cloud-build_20200603T2154_3358ed4'
     id: 'Building'
