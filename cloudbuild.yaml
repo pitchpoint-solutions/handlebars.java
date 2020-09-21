@@ -1,0 +1,18 @@
+steps:
+  - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:master_20200916T1930_d0e24d5'
+    id: 'Building'
+    env:
+      - 'BUILD_ID=$BUILD_ID'
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'COMMIT_SHA=$COMMIT_SHA'
+      - 'REVISION_ID=$REVISION_ID'
+      - 'SHORT_SHA=$SHORT_SHA'
+      - 'REPO_NAME=$REPO_NAME'
+      - 'BRANCH_NAME=$BRANCH_NAME'
+      - 'TAG_NAME=$TAG_NAME'
+      - 'GITHUB_HEAD_BRANCH=$_HEAD_BRANCH'
+      - 'GITHUB_BASE_BRANCH=$_BASE_BRANCH'
+      - 'GITHUB_HEAD_REPO_URL=$_HEAD_REPO_URL'
+      - 'GITHUB_PR_NUMBER=$_PR_NUMBER'
+
+timeout: 3600s

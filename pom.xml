@@ -182,6 +182,13 @@
   </dependencyManagement>
 
   <build>
+    <extensions>
+      <extension>
+        <groupId>com.gkatzioura.maven.cloud</groupId>
+        <artifactId>google-storage-wagon</artifactId>
+        <version>1.0</version>
+      </extension>
+    </extensions>
     <plugins>
       <!-- We're on 1.7 -->
       <plugin>
