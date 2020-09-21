@@ -1,19 +1,18 @@
 steps:
-  - name: 'ubuntu'
-    id: 'Setup'
-    args: ['bash', '-c', "echo `echo $BRANCH_NAME | sed 's,/,-,g' | awk '{print tolower($0)}'`_$(date -u +%Y%m%dT%H%M)_$SHORT_SHA > _TAG; echo $(cat _TAG)"]
-
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args: [ '-c', 'gcloud secrets versions access latest --secret=setenv-sh > setenv-sh.sh' ]
-
-  - id: git-submodule
-    name: 'gcr.io/cloud-builders/git'
-    entrypoint: '/bin/bash'
-    env: ['GIT_DISCOVERY_ACROSS_FILESYSTEM=1']
-    args: ['-c', "rm -rf handlebars/src/test/resources/mustache && git clone --progress --verbose https://github.com/mustache/spec.git handlebars/src/test/resources/mustache && ls -al handlebars/src/test/resources/mustache/"]
-
-  - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:feature-cloud-build_20200603T2154_3358ed4'
+  - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:master_20200916T1930_d0e24d5'
     id: 'Building'
-    entrypoint: '/bin/bash'
-    args: ['-c', 'source setenv-sh.sh && mvn versions:set -DnewVersion=$(cat _TAG) && mvn clean deploy -DcreateChecksum=true -DdeployAtEnd=true -DaltDeploymentRepository=releases::default::gs://mavenrepository.xppsi.com/release']
+    env:
+      - 'BUILD_ID=$BUILD_ID'
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'COMMIT_SHA=$COMMIT_SHA'
+      - 'REVISION_ID=$REVISION_ID'
+      - 'SHORT_SHA=$SHORT_SHA'
+      - 'REPO_NAME=$REPO_NAME'
+      - 'BRANCH_NAME=$BRANCH_NAME'
+      - 'TAG_NAME=$TAG_NAME'
+      - 'GITHUB_HEAD_BRANCH=$_HEAD_BRANCH'
+      - 'GITHUB_BASE_BRANCH=$_BASE_BRANCH'
+      - 'GITHUB_HEAD_REPO_URL=$_HEAD_REPO_URL'
+      - 'GITHUB_PR_NUMBER=$_PR_NUMBER'
+
+timeout: 3600s
