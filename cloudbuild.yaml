@@ -1,4 +1,10 @@
 steps:
+  - id: git-submodule
+    name: 'gcr.io/cloud-builders/git'
+    entrypoint: '/bin/bash'
+    env: ['GIT_DISCOVERY_ACROSS_FILESYSTEM=1']
+    args: ['-c', "rm -rf handlebars/src/test/resources/mustache && git clone --progress --verbose https://github.com/mustache/spec.git handlebars/src/test/resources/mustache && ls -al handlebars/src/test/resources/mustache/"]
+
   - name: 'us.gcr.io/xpps-container-registry/xpps-maven-java8:master_20200916T1930_d0e24d5'
     id: 'Building'
     env:
