@@ -33,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -113,7 +114,7 @@ public abstract class SpecTest {
   @SuppressWarnings("unchecked")
   public static Collection<Object[]> data(final Class<?> loader,
       final String filename) throws IOException {
-    Constructor constructor = new Constructor();
+    Constructor constructor = new Constructor(new LoaderOptions());
     constructor.addTypeDescription(new TypeDescription(Blog.class, "!blog"));
     constructor.addTypeDescription(new TypeDescription(Comment.class,
         "!comment"));
