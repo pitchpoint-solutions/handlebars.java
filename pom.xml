@@ -302,11 +302,26 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8.1</version>
+        <version>3.1.2</version>
+        <configuration>
+          <retryFailedDeploymentCount>3</retryFailedDeploymentCount>
+          <deployAtEnd>true</deployAtEnd>
+        </configuration>
       </plugin>
 
     </plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>artifact-registry-releases</id>
+      <url>artifactregistry://us-maven.pkg.dev/xpps-dev-infrastructure/pps-maven-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>artifact-registry-snapshots</id>
+      <url>artifactregistry://us-maven.pkg.dev/xpps-dev-infrastructure/pps-maven-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <profiles>
     <profile>

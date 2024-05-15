@@ -1,0 +1,74 @@
+name: Build handlebars.java
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 'Authenticate With Google Cloud'
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/689767042199/locations/global/workloadIdentityPools/github-wif-pool/providers/githubwif'
+          service_account: 'github-actions@xpps-dev-infrastructure.iam.gserviceaccount.com'
+          token_format: 'access_token'
+          access_token_lifetime: '1000s'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Set Versioning Variables
+        id: versions
+        shell: bash
+        run: |
+          # Replace '/' with '-'
+          CURRENT_VERSION=${GITHUB_REF_NAME//\//-}
+          CURRENT_TIME=$(date +'%Y%m%dT%H%M')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "image_version=${CURRENT_VERSION}_${CURRENT_TIME}_${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '8'
+
+      - name: Git Submodule
+        shell: bash
+        env:
+          GIT_DISCOVERY_ACROSS_FILESYSTEM: 1
+        run: |
+          rm -rf handlebars/src/test/resources/mustache
+          git clone --progress --verbose https://github.com/mustache/spec.git handlebars/src/test/resources/mustache
+          ls -al handlebars/src/test/resources/mustache/
+
+      - name: Grab GCP Secrets
+        shell: bash
+        run: gcloud secrets versions access latest --secret=setenv-sh > setenv-sh.sh
+
+      - name: Build With Maven
+        shell: bash
+        env:
+          BUILD_ID: ${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+          REVISION_ID: ${{ github.sha }}
+          SHORT_SHA: ${{ steps.versions.outputs.short_sha }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          PROJECT_ID: xpps-dev-infrastructure
+        run: |
+          source setenv-sh.sh
+          mvn versions:set -DnewVersion=${{ steps.versions.outputs.image_version }}
+          mvn clean deploy -e
