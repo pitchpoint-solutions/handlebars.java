@@ -3,31 +3,31 @@ name: Build handlebars.java
 on:
   push:
     branches:
-      - '**'
+      - 'master'
+      - 'main'
+    paths-ignore:
+      - '.github/workflows/**'
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 'Authenticate With Google Cloud'
+      - name: Authenticate With Google Cloud
         id: auth
-        uses: google-github-actions/auth@v2
+        uses: pitchpoint-solutions/pps-github-common/actions/gcloud-auth@master
         with:
-          workload_identity_provider: 'projects/689767042199/locations/global/workloadIdentityPools/github-wif-pool/providers/githubwif'
-          service_account: 'github-actions@xpps-dev-infrastructure.iam.gserviceaccount.com'
-          token_format: 'access_token'
-          access_token_lifetime: '1000s'
-
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+          setup_gcloud: true
 
       - name: Set Versioning Variables
         id: versions
@@ -43,8 +43,8 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
-          java-version: '8'
+          distribution: zulu
+          java-version: 8
 
       - name: Git Submodule
         shell: bash
